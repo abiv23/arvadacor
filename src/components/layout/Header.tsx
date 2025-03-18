@@ -1,112 +1,112 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Menu, X } from "lucide-react"
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  // Navigation links for Cor
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Past Gatherings", href: "/past-gatherings" },
+    { name: "About", href: "/about" },
+    { name: "Resources", href: "/resources" },
+    { name: "Contact", href: "/contact" }
+  ]
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show header after scrolling down 100px
+      if (window.scrollY > 100) {
+        setIsVisible(true)
+      } else {
+        setIsVisible(false)
+      }
+    }
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll)
+    
+    // Clean up
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
+  // If not visible, don't render anything to avoid taking up space
+  if (!isVisible) {
+    return null;
+  }
 
   return (
-    <header className="relative">
-      {/* Hero Banner Section with Logo */}
-      <div className="w-full relative h-[250px] overflow-hidden">
-        <Image
-          src="https://ext.same-assets.com/3262606799/2431624552.jpeg"
-          alt="Cor Banner - Blacksmith working with fire"
-          fill
-          priority
-          className="object-cover"
-        />
+    <header 
+      className="fixed top-0 left-0 right-0 z-50 animate-fade-in-down backdrop-blur-md bg-white/80 border-b border-gray-200/50 shadow-sm"
+    >
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <span 
+              className="text-xl font-bold text-cor-navy" 
+              style={{ fontFamily: "var(--font-outfit)" }}
+            >
+              Cor
+            </span>
+          </Link>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center bg-black bg-opacity-40">
-          <h1 className="text-5xl font-bold mb-1">Cor</h1>
-          <div className="text-xl font-light tracking-wider">Prayer • Formation • Fraternity</div>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8 text-sm">
+            {navLinks.map((link, index) => (
+              <Link 
+                key={index}
+                href={link.href} 
+                className="text-cor-navy font-medium hover:text-cor-gold transition duration-200"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden text-cor-navy z-20"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="bg-cor-navy text-white py-3">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex justify-between items-center">
-            <div className="hidden md:flex space-x-8 text-sm">
-              <Link href="/" className="hover:text-cor-gold transition duration-200">
-                Home
-              </Link>
-              <Link href="/past-gatherings" className="hover:text-cor-gold transition duration-200">
-                Past Gatherings
-              </Link>
-              <Link href="/about" className="hover:text-cor-gold transition duration-200">
-                About
-              </Link>
-              <Link href="/resources" className="hover:text-cor-gold transition duration-200">
-                Resources
-              </Link>
-              <Link href="/contact" className="hover:text-cor-gold transition duration-200">
-                Contact
-              </Link>
-            </div>
-
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden text-white z-20"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+      {/* Mobile Menu */}
+      <div 
+        className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+          isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-4 py-3 space-y-4 bg-white/90 backdrop-blur-md">
+          {navLinks.map((link, index) => (
+            <Link 
+              key={index}
+              href={link.href} 
+              className="block text-cor-navy font-medium hover:text-cor-gold transition duration-200 py-2"
+              onClick={() => setIsMenuOpen(false)}
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
-          </div>
+              {link.name}
+            </Link>
+          ))}
         </div>
-      </nav>
-
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 bg-cor-navy z-10 md:hidden pt-16">
-          <div className="flex flex-col items-center space-y-6 pt-8 text-lg">
-            <Link
-              href="/"
-              className="text-white hover:text-cor-gold transition duration-200"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/past-gatherings"
-              className="text-white hover:text-cor-gold transition duration-200"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Past Gatherings
-            </Link>
-            <Link
-              href="/about"
-              className="text-white hover:text-cor-gold transition duration-200"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About
-            </Link>
-            <Link
-              href="/resources"
-              className="text-white hover:text-cor-gold transition duration-200"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Resources
-            </Link>
-            <Link
-              href="/contact"
-              className="text-white hover:text-cor-gold transition duration-200"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contact
-            </Link>
-          </div>
-        </div>
-      )}
+      </div>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
